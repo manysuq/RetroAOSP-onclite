@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 #
-# RetroAOSP (NougatMod OS) — локальная сборка LineageOS 21 + ретро-патчи для Redmi 7 (onclite).
+# RetroAOSP (NougatMod OS) — локальная сборка LineageOS 22.2 (Android 15) + ретро-патчи для Redmi 7 (onclite).
 #
 # Заточен под машину с небольшим свободным местом на системном диске:
 # всё дерево исходников и сборка живут внутри sparse-файла с btrfs (сжатие zstd),
@@ -98,8 +98,8 @@ cmd_sync() {
     need_tools git git-lfs python3
     cd "$ROM"
 
-    step "repo init (LineageOS 21, ветка lineage-21.0 — именно так, ветки lineage-21 не существует)"
-    repo init -u https://github.com/LineageOS/android.git -b lineage-21.0 --git-lfs --depth=1
+    step "repo init (LineageOS 22.2 / Android 15 — последняя ветка с деревьями onclite)"
+    repo init -u https://github.com/LineageOS/android.git -b lineage-22.2 --git-lfs --depth=1
 
     step "Локальный манифест Redmi 7 (onclite)"
     mkdir -p .repo/local_manifests

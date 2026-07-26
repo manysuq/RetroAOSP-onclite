@@ -28,19 +28,17 @@ jobs:
           set -e
           check() { git ls-remote --heads "https://github.com/$1.git" "refs/heads/$2" | grep -q . \
                     && echo "OK  $1 @ $2" || { echo "FAIL $1 @ $2"; exit 1; }; }
-          check LineageOS/android lineage-21.0
-          check LineageOS/android_device_xiaomi_onclite lineage-21
-          check LineageOS/android_device_xiaomi_msm8953-common lineage-21
-          check LineageOS/android_kernel_xiaomi_onclite lineage-21
-          check LineageOS/android_hardware_xiaomi lineage-21
-          check TheMuppets/proprietary_vendor_xiaomi_onclite lineage-21
-          check TheMuppets/proprietary_vendor_xiaomi_msm8953-common lineage-20
+          check LineageOS/android lineage-22.2
+          check LineageOS/android_device_xiaomi_onclite lineage-22.2
+          check LineageOS/android_kernel_xiaomi_onclite lineage-22.2
+          check LineageOS/android_hardware_xiaomi lineage-22.2
+          check TheMuppets/proprietary_vendor_xiaomi_onclite lineage-22.2
 
-      - name: 🎯 Проверка целей Java-патчей в живом lineage-21
+      - name: 🎯 Проверка целей Java-патчей в живом lineage-22.2
         run: |
           set -e
-          B="https://raw.githubusercontent.com/LineageOS/android_frameworks_base/lineage-21.0"
-          T="https://raw.githubusercontent.com/LineageOS/android_packages_apps_Trebuchet/lineage-21.0"
+          B="https://raw.githubusercontent.com/LineageOS/android_frameworks_base/lineage-22.2"
+          T="https://raw.githubusercontent.com/LineageOS/android_packages_apps_Trebuchet/lineage-22.2"
           fetch_grep() { curl -fsSL "$1" | grep -qF "$2" \
                          && echo "OK  $3" || { echo "FAIL $3 — цель патча исчезла из апстрима!"; exit 1; }; }
           fetch_grep "$B/graphics/java/android/graphics/drawable/RippleDrawable.java" \

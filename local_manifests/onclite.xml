@@ -1,27 +1,23 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!--
-    Локальный манифест для сборки RetroAOSP (Android 14 / LineageOS 21, ветка платформы lineage-21.0)
+    Локальный манифест для сборки RetroAOSP (Android 15 / LineageOS 22.2)
     Поддержка устройства: Xiaomi Redmi 7 (кодовое имя: onclite / onc)
     Платформа: Qualcomm Snapdragon 632 (msm8953)
+
+    ВАЖНО: с lineage-22.2 дерево onclite самостоятельное — общий msm8953-common
+    больше не нужен (проверено: BoardConfig.mk ссылается только на vendor/xiaomi/onclite,
+    lineage.dependencies содержит только hardware/xiaomi и ядро).
 -->
 <manifest>
-    <!-- Основной репозиторий деревьев устройства (Device Tree) для Redmi 7 -->
-    <project path="device/xiaomi/onclite" name="LineageOS/android_device_xiaomi_onclite" remote="github" revision="lineage-21" />
+    <!-- Дерево устройства (Device Tree) для Redmi 7 -->
+    <project path="device/xiaomi/onclite" name="LineageOS/android_device_xiaomi_onclite" remote="github" revision="lineage-22.2" />
 
-    <!-- Общее дерево для платформы msm8953 -->
-    <project path="device/xiaomi/msm8953-common" name="LineageOS/android_device_xiaomi_msm8953-common" remote="github" revision="lineage-21" />
+    <!-- Проприетарные бинарники и библиотеки (Vendor Tree) -->
+    <project path="vendor/xiaomi/onclite" name="TheMuppets/proprietary_vendor_xiaomi_onclite" remote="github" revision="lineage-22.2" />
 
-    <!-- Проприетарные бинарники и библиотеки (Vendor Tree) для Redmi 7 -->
-    <project path="vendor/xiaomi/onclite" name="TheMuppets/proprietary_vendor_xiaomi_onclite" remote="github" revision="lineage-21" />
-    
-    <!-- КРИТИЧЕСКИ ВАЖНО: У TheMuppets для msm8953-common существует ТОЛЬКО ветка lineage-20. 
-         Жестко фиксируем revision="lineage-20", иначе repo sync упадет с ошибкой "remote ref not found" -->
-    <project path="vendor/xiaomi/msm8953-common" name="TheMuppets/proprietary_vendor_xiaomi_msm8953-common" remote="github" revision="lineage-20" />
+    <!-- Ядро (согласно lineage.dependencies) -->
+    <project path="kernel/xiaomi/onclite" name="LineageOS/android_kernel_xiaomi_onclite" remote="github" revision="lineage-22.2" />
 
-    <!-- КРИТИЧЕСКИ ВАЖНО: Согласно официальному lineage.dependencies устройства onclite,
-         требуется выделенное ядро android_kernel_xiaomi_onclite по пути kernel/xiaomi/onclite -->
-    <project path="kernel/xiaomi/onclite" name="LineageOS/android_kernel_xiaomi_onclite" remote="github" revision="lineage-21" />
-
-    <!-- Аппаратные HAL-модули и зависимости Xiaomi -->
-    <project path="hardware/xiaomi" name="LineageOS/android_hardware_xiaomi" remote="github" revision="lineage-21" />
+    <!-- Аппаратные HAL-модули Xiaomi (согласно lineage.dependencies) -->
+    <project path="hardware/xiaomi" name="LineageOS/android_hardware_xiaomi" remote="github" revision="lineage-22.2" />
 </manifest>
