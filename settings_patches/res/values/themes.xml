@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+    RetroAOSP (NougatMod OS) — Темы приложения Настройки (Settings)
+    Переопределение реального ресурса packages/apps/Settings/res/values/themes.xml
+    для удаления CollapsingToolbarLayout и возврата к стилю Android 7.
+-->
+<resources>
+    <!-- Главная тема Настроек (Settings) -->
+    <style name="Theme.Settings" parent="Theme.DeviceDefault">
+        <!-- Отключаем двухстрочный падающий заголовок, включаем фиксированный 56dp ActionBar -->
+        <item name="android:actionBarStyle">@style/Widget.DeviceDefault.ActionBar.MD1</item>
+        <item name="android:windowLightStatusBar">false</item>
+        <item name="android:windowLightNavigationBar">false</item>
+        <item name="android:statusBarColor">#FF00796B</item> <!-- Dark Teal 700 -->
+        <item name="android:navigationBarColor">#FF000000</item>
+        
+        <!-- Подключаем классический стиль предпочтений Material 1 (без овальных плашек) -->
+        <item name="preferenceTheme">@style/PreferenceTheme.MD1</item>
+    </style>
+
+    <!-- Тема главной страницы Настроек -->
+    <style name="Theme.Settings.Home" parent="Theme.Settings">
+        <item name="android:actionBarStyle">@style/Widget.DeviceDefault.ActionBar.MD1</item>
+    </style>
+
+    <!-- Тема для подменю в Настройках -->
+    <style name="Theme.ActionBar.SubSettings" parent="Theme.Settings">
+        <item name="android:actionBarStyle">@style/Widget.DeviceDefault.ActionBar.MD1</item>
+    </style>
+
+    <!-- Классический стиль списков в Настройках (высота 48dp, нет огромных отступов) -->
+    <style name="PreferenceTheme.MD1" parent="@style/PreferenceTheme">
+        <item name="preferenceStyle">@style/PreferenceStyle.MD1</item>
+        <item name="preferenceCategoryStyle">@style/PreferenceCategoryStyle.MD1</item>
+    </style>
+
+    <style name="PreferenceStyle.MD1" parent="@style/Preference">
+        <item name="android:layout">@null</item> <!-- Отмена кастомных овальных макетов M3 -->
+        <item name="android:minHeight">48dp</item>
+        <item name="android:iconSpaceReserved">true</item>
+    </style>
+
+    <style name="PreferenceCategoryStyle.MD1" parent="@style/Preference.Category">
+        <item name="android:textColor">#FF009688</item> <!-- Акцент Teal 500 для заголовков категорий -->
+        <item name="android:textSize">14sp</item>
+        <item name="android:textStyle">bold</item>
+    </style>
+</resources>

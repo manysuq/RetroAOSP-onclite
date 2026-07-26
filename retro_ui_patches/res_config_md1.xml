@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+    RetroAOSP (NougatMod OS) — Системные конфигурационные флаги
+    Включение классических режимов управления и отключение тяжелых анимаций/размытий.
+-->
+<resources>
+    <!-- 
+        Режим навигации по умолчанию:
+        0 = 3-кнопочная классическая навигация (Назад, Домой, Недавние) из Android 7
+        1 = 2-кнопочная навигация (эпоха Android 9 Pie)
+        2 = Жестовая навигация (Android 10+)
+    -->
+    <integer name="config_navBarInteractionMode">0</integer>
+
+    <!-- Отключение системного размытия окон (Blur) для разгрузки GPU Snapdragon 632 -->
+    <bool name="config_sf_limitedAlpha">true</bool>
+    <bool name="config_useSlipperySurfaces">false</bool>
+    <bool name="config_enableWallpaperService">true</bool>
+
+    <!-- Отключение динамического изменения цветов темы по обоям (Monet) по умолчанию -->
+    <bool name="config_enableMonetTheming">false</bool>
+    
+    <!-- Классический стиль анимаций переходов (более резкие и быстрые переходы, как в MD1) -->
+    <integer name="config_shortAnimTime">150</integer>
+    <integer name="config_mediumAnimTime">250</integer>
+    <integer name="config_longAnimTime">350</integer>
+</resources>

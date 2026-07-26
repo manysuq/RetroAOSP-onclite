@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+    RetroAOSP (NougatMod OS) — Геометрические параметры Material Design 1
+    Этот файл заменяет современные параметры скругления (Material You 16-28dp)
+    на классические стандарты Android 7 Nougat (2dp-4dp).
+-->
+<resources>
+    <!-- Основной радиус скругления кнопок (в Android 7 — строгие 2dp) -->
+    <dimen name="config_buttonCornerRadius">2dp</dimen>
+
+    <!-- Радиус скругления диалоговых окон (AlertDialog, BottomSheet, Autofill) -->
+    <dimen name="config_dialogCornerRadius">2dp</dimen>
+    <dimen name="autofill_dialog_corner_radius">2dp</dimen>
+
+    <!-- Радиус скругления плавающих окон и меню (PopupMenu, Dropdown) -->
+    <dimen name="config_popupCornerRadius">2dp</dimen>
+    <dimen name="config_menuCornerRadius">2dp</dimen>
+
+    <!-- Радиус скругления карточек уведомлений и фоновых контейнеров -->
+    <dimen name="config_cardCornerRadius">2dp</dimen>
+    <dimen name="notification_corner_radius">2dp</dimen>
+    <dimen name="notification_corner_radius_small">2dp</dimen>
+    <dimen name="notification_scrim_corner_radius">0dp</dimen>
+
+    <!-- Плитки шторки быстрых настроек (Quick Settings Tiles) -->
+    <dimen name="qs_tile_corner_radius">2dp</dimen>
+    <dimen name="qs_tile_margin_horizontal">4dp</dimen>
+    <dimen name="qs_tile_margin_vertical">4dp</dimen>
+    
+    <!-- Классическая тень и отступы диалогов и тостов -->
+    <dimen name="config_dialogElevation">24dp</dimen>
+    <dimen name="config_viewElevation">2dp</dimen>
+    <dimen name="toast_elevation">2dp</dimen>
+    <dimen name="toast_y_offset">64dip</dimen>
+    <dimen name="alert_dialog_round_padding">16dip</dimen>
+</resources>

@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+    RetroAOSP (NougatMod OS) — Геометрия SystemUI (dimens.xml)
+    Абсолютное совпадение с переменными lineage-22.2 / AOSP 15-16.
+-->
+<resources>
+    <!-- Скругление фона (скрима) шторки уведомлений — 0dp для плоского классического вида -->
+    <dimen name="notification_scrim_corner_radius">0dp</dimen>
+    
+    <!-- Скругление карточек уведомлений — 2dp (классический Material Design 2014) -->
+    <dimen name="notification_corner_radius">2dp</dimen>
+    <dimen name="notification_corner_radius_small">2dp</dimen>
+    <dimen name="control_popup_corner_radius">2dp</dimen>
+    <dimen name="control_popup_item_corner_radius">2dp</dimen>
+
+    <!-- Скругление плиток Quick Settings (вместо овалов 28dp делаем строгие прямоугольники 2dp) -->
+    <dimen name="qs_corner_radius">2dp</dimen>
+    <dimen name="qs_tile_corner_radius">2dp</dimen>
+    <dimen name="qs_tile_margin_horizontal">4dp</dimen>
+    <dimen name="qs_tile_margin_vertical">4dp</dimen>
+    <dimen name="qs_panel_padding_top">16dp</dimen>
+
+    <!-- Ползунок яркости в шторке (убираем толстую пилюлю 48dp, делаем тонкую полосу 24dp) -->
+    <dimen name="brightness_mirror_height">24dp</dimen>
+    <dimen name="qs_brightness_margin_top">4dp</dimen>
+    <dimen name="qs_brightness_margin_bottom">4dp</dimen>
+
+    <!-- Высота статус-бара (в Android 7 — строгие 24dp без лишнего отступа под камеру) -->
+    <dimen name="status_bar_height">24dp</dimen>
+    <dimen name="status_bar_icon_size">16dp</dimen>
+    <dimen name="status_bar_clock_size">14sp</dimen>
+
+    <!-- Панель регулировки громкости (Volume Dialog) — убираем овальные сардельки (21dp -> 2dp) -->
+    <dimen name="volume_dialog_slider_corner_radius">2dp</dimen>
+    <dimen name="volume_slider_corner_radius">2dp</dimen>
+    <dimen name="volume_dialog_panel_width">48dp</dimen>
+    <dimen name="volume_dialog_slider_width_legacy">36dp</dimen>
+
+    <!-- Меню выключения питания (Global Actions) — убираем гигантские плитки 98dp -->
+    <dimen name="global_actions_grid_item_layout_height">48dp</dimen>
+    <dimen name="global_actions_grid_item_side_margin">2dp</dimen>
+</resources>

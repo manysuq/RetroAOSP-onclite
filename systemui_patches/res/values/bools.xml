@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+    RetroAOSP (NougatMod OS) — Переопределение флагов SystemUI (bools.xml)
+    Принудительное отключение гигантских двухстрочных часов на экране блокировки
+-->
+<resources>
+    <!-- Только компактные однострочные часы на экране блокировки (как в Android 7 Nougat) -->
+    <bool name="force_small_clock_on_lockscreen">true</bool>
+    <bool name="config_enableKeyguardLargeClock">false</bool>
+    
+    <!-- Отключение современных широких жестов навигации в пользу классических кнопок -->
+    <bool name="config_allowGesturalNavigation">false</bool>
+</resources>

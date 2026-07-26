@@ -1,0 +1,79 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+    RetroAOSP (NougatMod OS) — Глобальная тема Theme.DeviceDefault (Material Design 1)
+    Этот файл переопределяет системную тему фреймворка (frameworks/base/core/res/res/values/themes_device_defaults.xml),
+    чтобы ВСЕ системные приложения (Настройки, Контакты, Звонилка, Калькулятор, Часы, Файлы, Диалоги)
+    наследовали классический стиль Android 7 Nougat (2014-2016 specs).
+-->
+<resources>
+    <!-- Главная тема системы, от которой наследуются все штатные приложения AOSP -->
+    <style name="Theme.DeviceDefault" parent="Theme.Material">
+        <!-- Цветовая палитра MD1 (Teal #009688 и Indigo #3F51B5) -->
+        <item name="android:colorPrimary">#FF009688</item>
+        <item name="android:colorPrimaryDark">#FF00796B</item>
+        <item name="android:colorAccent">#FF009688</item>
+        
+        <!-- Отключение динамических цветов Monet во всех дочерних окнах -->
+        <item name="android:colorSecondary">#FF3F51B5</item>
+        <item name="android:colorBackground">#FF303030</item>
+        
+        <!-- Геометрия MD1: радиус скругления 2dp (вместо 16-28dp в Material 3) -->
+        <item name="android:dialogCornerRadius">2dp</item>
+        <item name="android:buttonCornerRadius">2dp</item>
+        
+        <!-- Элевация (тени) по спецификации Material Design 2014 -->
+        <item name="android:actionBarStyle">@style/Widget.DeviceDefault.ActionBar.MD1</item>
+        <item name="android:buttonStyle">@style/Widget.DeviceDefault.Button.MD1</item>
+        <item name="android:floatingActionButtonStyle">@style/Widget.DeviceDefault.FloatingActionButton.MD1</item>
+        
+        <!-- Стили диалоговых окон -->
+        <item name="android:alertDialogTheme">@style/Theme.DeviceDefault.Dialog.Alert.MD1</item>
+        <item name="android:dialogTheme">@style/Theme.DeviceDefault.Dialog.MD1</item>
+    </style>
+
+    <!-- Светлая вариация темы для приложений, использующих Light тему (Настройки, Файлы) -->
+    <style name="Theme.DeviceDefault.Light" parent="Theme.Material.Light">
+        <item name="android:colorPrimary">#FF009688</item>
+        <item name="android:colorPrimaryDark">#FF00796B</item>
+        <item name="android:colorAccent">#FF009688</item>
+        <item name="android:colorBackground">#FFFAFAFA</item>
+        <item name="android:dialogCornerRadius">2dp</item>
+        <item name="android:buttonCornerRadius">2dp</item>
+        <item name="android:actionBarStyle">@style/Widget.DeviceDefault.ActionBar.MD1</item>
+        <item name="android:buttonStyle">@style/Widget.DeviceDefault.Button.MD1</item>
+        <item name="android:floatingActionButtonStyle">@style/Widget.DeviceDefault.FloatingActionButton.MD1</item>
+    </style>
+
+    <!-- Классический ActionBar (высота 56dp, тень 4dp) -->
+    <style name="Widget.DeviceDefault.ActionBar.MD1" parent="android:Widget.Material.ActionBar">
+        <item name="android:elevation">4dp</item>
+        <item name="android:height">56dp</item>
+        <item name="android:background">#FF009688</item>
+    </style>
+
+    <!-- Классическая кнопка Material 1 (скругление 2dp, тень в покое 2dp) -->
+    <style name="Widget.DeviceDefault.Button.MD1" parent="android:Widget.Material.Button">
+        <item name="android:elevation">2dp</item>
+        <item name="android:stateListAnimator">@null</item> <!-- Отключение сложных анимаций M3 -->
+        <item name="android:backgroundTint">#FF009688</item>
+        <item name="android:textColor">#FFFFFFFF</item>
+    </style>
+
+    <!-- Плавающая кнопка FAB (тень в покое 6dp, при нажатии 12dp) -->
+    <style name="Widget.DeviceDefault.FloatingActionButton.MD1" parent="android:Widget.Material.FloatingActionButton">
+        <item name="android:elevation">6dp</item>
+        <item name="android:backgroundTint">#FF009688</item>
+    </style>
+
+    <!-- Диалоговые окна (радиальное скругление 2dp, тень 24dp) -->
+    <style name="Theme.DeviceDefault.Dialog.Alert.MD1" parent="android:Theme.Material.Dialog.Alert">
+        <item name="android:windowElevation">24dp</item>
+        <item name="android:colorPrimary">#FF009688</item>
+        <item name="android:colorAccent">#FF009688</item>
+    </style>
+    <style name="Theme.DeviceDefault.Dialog.MD1" parent="android:Theme.Material.Dialog">
+        <item name="android:windowElevation">24dp</item>
+        <item name="android:colorPrimary">#FF009688</item>
+        <item name="android:colorAccent">#FF009688</item>
+    </style>
+</resources>
