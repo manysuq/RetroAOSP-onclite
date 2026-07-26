@@ -1,0 +1,4 @@
+tests/mock_android/
+tests/mock_idempotent/
+*.tmp
+*.bak
