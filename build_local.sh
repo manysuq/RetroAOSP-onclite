@@ -132,12 +132,18 @@ cmd_build() {
         rm -rf .repo
     fi
 
-    step "Компиляция lineage_onclite-$BUILD_TYPE (-j$JOBS). Это займёт 6-9 часов."
+    # С Android 15 в lunch обязателен release-суффикс (для lineage-22.2 это bp1a).
+    # Берём его из vendor/lineage, как делает сам breakfast.
+    local release
+    release=$(sed -n 's/^aosp_target_release=//p' vendor/lineage/vars/aosp_target_release 2>/dev/null || true)
+    local target="lineage_onclite${release:+-$release}-$BUILD_TYPE"
+
+    step "Компиляция $target (-j$JOBS). Это займёт 6-9 часов."
     df -h "$MNT" | sed 's/^/  /'
     export LC_ALL=C
     # shellcheck disable=SC1091
     source build/envsetup.sh
-    lunch "lineage_onclite-$BUILD_TYPE"
+    lunch "$target"
     mka bacon -j"$JOBS"
 
     step "Результат"
