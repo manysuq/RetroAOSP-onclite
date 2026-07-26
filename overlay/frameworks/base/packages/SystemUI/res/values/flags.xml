@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+    RetroAOSP — отключение Monet (динамическая перекраска темы под обои).
+    С выключенным flag_monet система использует статические цвета system_accent1_*
+    из нашего overlay фреймворка (Teal 500).
+-->
+<resources>
+    <bool name="flag_monet">false</bool>
+</resources>

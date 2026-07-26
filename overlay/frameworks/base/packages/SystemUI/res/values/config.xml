@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+    RetroAOSP — сетка Quick Settings 3x3 (как в Android 7 Nougat).
+    Имена проверены по packages/SystemUI/res/values/config.xml lineage-21.
+-->
+<resources>
+    <integer name="quick_settings_num_columns">3</integer>
+    <integer name="quick_settings_max_rows">3</integer>
+</resources>

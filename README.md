@@ -1,54 +1,72 @@
 # 🕹️ RetroAOSP (NougatMod OS) для Xiaomi Redmi 7 (`onclite`)
 
-> **Кастомный РОМ на базе современного Android 16 (AOSP / LineageOS) с глубокой инженерной адаптацией всей системы, графического движка и иконок под спецификации Material Design 1 (Android 5 Lollipop / Android 7 Nougat).**
+> Интерфейс **Android 7.1 Nougat (Material Design 1, Teal 500)** на базе современного
+> **LineageOS 21 (Android 14)**. Честные патчи поверх реальных исходников:
+> каждая цель патча сверена с деревом `lineage-21`, ресурсы переопределяются
+> штатным overlay-механизмом, а не хаками.
 
----
+## Что даёт v2
 
-## 💡 О проекте
+| Область | Что сделано | Механизм |
+|---|---|---|
+| Акцент системы | Teal 500 `#009688` везде, Monet (Material You) выключен | overlay: `system_accent1_*` + `flag_monet=false` |
+| Геометрия | Углы 2dp у диалогов, кнопок, уведомлений, плиток QS | overlay: `config_dialogCornerRadius`, `control_corner_material`, `notification_corner_radius`, … |
+| Шторка | Сетка Quick Settings **3×3**, тонкий плоский ползунок яркости (28dp) | overlay: `quick_settings_num_columns/max_rows`, `rounded_slider_*` |
+| Касание | Классическая радиальная волна без «искр» Android 12+ | патч: `FORCE_PATTERNED_STYLE=false` в `RippleDrawable.java` |
+| Часы | Статус-бар: часы **справа** по умолчанию; локскрин: компактные однострочные | патч `ClockController.java` + overlay `config_doublelineClockDefault=0` |
+| Навигация | Классические 3 кнопки по умолчанию | overlay: `config_navBarInteractionMode=0` |
+| Лаунчер | Кнопка «Все приложения» в доке | патч: флаг `ENABLE_ALL_APPS_BUTTON_IN_HOTSEAT` → `ENABLED` |
+| Настройки | Плотный список 48dp вместо карточек 88sp/28dp | overlay: `homepage_preference_*` |
+| Иконки | Классические 3D-иконки CM 14.1 у системных приложений, квадратная маска | замена ресурсов по имени из манифеста каждого приложения |
+| Бут-анимация | Оригинальная CM 14.1 (5 частей) **с согласованным desc.txt** | замена в `vendor/lineage/bootanimation` |
+| Звуки | Tick / Lock / Unlock из Android 7 | замена в `frameworks/base/data/sounds` |
+| Анимации | Ускорены (150/250/350 мс) — бонус к отзывчивости SD632 | overlay: `config_*AnimTime` |
 
-**RetroAOSP** — это результат тщательного инженерного реверс-инжиниринга и исследования архитектуры AOSP. Прошивка возвращает аутентичную атмосферу 2014–2016 годов на современную стабильную и безопасную ОС:
-* 🌊 **Чистый Ripple-эффект (`RippleDrawable`):** В графическом движке `frameworks/base/graphics` отключен современный шейдер "искр" и "шума" (sparkles / noise из Android 12). Возвращена классическая, чистая расходящаяся радиальная волна при касании.
-* 📦 **Аутентичный икон-пак и отмена маскировки:** В ядре системы отключена маскировка `config_icon_mask`, обрезавшая значки в круги/пилюли. Все штатные приложения (Настройки, Телефон, Контакты, Калькулятор, Часы, Файлы) получают оригинальные асимметричные геометрические иконки из LineageOS 14.1 (Android 7.1.2) с эффектом сложенной бумаги и падающими тенями.
-* 🏢 **Глобальная тема фреймворка (`Theme.DeviceDefault`):** Полное переопределение `themes_device_defaults.xml`. Отключен движок Monet (Material You), все окна, диалоги и кнопки жестко зафиксированы на скруглениях **2dp**, элевации **4dp/8dp** и палитре **Teal 500 (`#009688`) / Indigo (`#3F51B5`)**.
-* 📱 **Адаптация всех штатных приложений:** Калькулятор (`ExactCalculator`), Часы (`DeskClock`), Контакты (`Contacts`), Звонилка (`Dialer`), Файловый менеджер (`DocumentsUI`) и Пакетный менеджер принудительно переведены на использование классической палитры и отключение макетов Material You.
-* 🏠 **Лаунчер с кнопкой меню (6 точек):** Реальная модификация Java-кода (`Hotseat.java` и `FeatureFlags.java`) и XML-макетов в `Launcher3`, возвращающая постоянную кнопку **All Apps** в центр дока и отключающая свайп вверх.
-* ⚙️ **Классические Настройки (`Settings`):** Выпилен огромный двухстрочный `CollapsingToolbarLayout`, возвращен плотный однострочный список (высота строк 48dp), фирменная шапка `ActionBar` (56dp) и бирюзовые переключатели.
-* 📊 **Шторка и Статус-бар (`SystemUI`):** Использованы реальные конфигурации AOSP (`quick_settings_num_columns` и `notification_scrim_corner_radius`). Овальные пилюли заменены на сетку 3x3, радиусы уведомлений снижены до 2dp/0dp, возвращен тонкий шрифт часов `sans-serif-light` (Roboto Light).
-* 🖼️ **Фирменные обои:** Автоматическая установка оригинальных абстрактных волн (Lollipop/Marshmallow/Nougat) в качестве стандартного фона `default_wallpaper.png`.
+Честные границы: меню недавних остаётся горизонтальным (это тонны Java-кода),
+структура страниц Настроек — современная, но выглядит плоско и по-старому.
+База — LineageOS 21 (Android 14): это последняя ветка с официальными деревьями Redmi 7.
 
----
+## Почему не GitHub Actions
 
-## 📁 Архитектура 8 инженерных модулей
+Лимит бесплатной джобы — 6 часов и ~80 ГБ диска. Полная сборка LineageOS требует
+15–30 ч на 4 vCPU и ~250 ГБ. Поэтому CI (`validate.yml`) только линтит патчи и
+еженедельно проверяет, что цели патчей не «уехали» в апстриме, а сборка — локальная.
+
+## Локальная сборка
+
+Требования: x86_64 Linux, 16+ ГБ RAM, **170+ ГБ свободного места на любом диске**
+(даже NTFS/USB — сборка идёт внутри sparse-образа btrfs со сжатием), ~100 ГБ трафика.
+
+```bash
+./build_local.sh all            # prepare -> sync -> patch -> build (--reclaim)
+# или по шагам:
+./build_local.sh prepare        # создать и примонтировать сборочный том + swap
+./build_local.sh sync           # repo init (lineage-21.0) + repo sync
+./build_local.sh patch          # применить ретро-патчи (patches/apply.sh)
+./build_local.sh build          # mka bacon, ~6-9 часов на 6-ядернике
+./build_local.sh status         # мониторинг места
+./build_local.sh destroy        # удалить образ, вернуть место (ZIP сохраняется рядом)
+```
+
+Готовая прошивка копируется в `RetroAOSP-out/` рядом с образом.
+
+## Структура
 
 ```text
-RetroAOSP-onclite/
-├── .github/workflows/
-│   └── build_rom.yml           # Облачный робот автосборки прошивки на серверах GitHub Actions
-├── local_manifests/
-│   └── onclite.xml             # Деревья устройства, вендора и ядра Redmi 7 (Snapdragon 632)
-├── ripple_patches/
-│   └── patch_ripple_drawable.sh # Отключение искрящегося шума и возврат чистой волны касания
-├── icon_pack_patches/
-│   └── install_classic_icons.sh # Отключение маски Adaptive Icons и установка значков Nougat
-├── launcher3_patches/
-│   ├── ic_allapps_md1.xml      # Векторная иконка "6 точек" для меню приложений
-│   └── patch_launcher3.sh      # Инженерный патчер Java и XML для Launcher3
-├── settings_patches/
-│   ├── res/values/themes.xml   # Реальная замена тем Настроек без CollapsingToolbar
-│   └── patch_settings.sh       # Интегратор Настроек
-├── system_apps_patches/
-│   └── patch_all_system_apps.sh # Адаптор для Калькулятора, Часов, Контактов, Звонилки и Файлов
-├── systemui_patches/
-│   ├── res/values/config.xml   # Конфигурация сетки 3x3
-│   ├── res/values/dimens.xml   # Реальные размеры AOSP (углы 2dp, статус-бар 24dp)
-│   └── patch_systemui.sh       # Интегратор SystemUI
-├── wallpapers/
-│   └── install_retro_wallpapers.sh # Загрузчик классических обоев
-├── retro_ui_patches/
-│   ├── apply_retro_patches.sh  # Главный мастер-скрипт, запускающий все 8 модулей
-│   ├── themes_device_defaults_md1.xml # Глобальное переопределение Theme.DeviceDefault
-│   ├── res_dimens_md1.xml      # Строгие скругления 2dp
-│   ├── res_colors_md1.xml      # Палитра Teal #009688
-│   └── res_config_md1.xml      # Включение 3-кнопочной навигации
-└── build_rom.sh                # Локальный/серверный скрипт сборки
+overlay/                 # DEVICE_PACKAGE_OVERLAYS: framework, SystemUI, Settings + обои
+assets/                  # bootanimation (tar + desc.txt), звуки, иконки
+patches/apply.sh         # интегратор: overlay + Java-патчи с проверкой каждой цели
+local_manifests/onclite.xml  # деревья устройства/вендора/ядра (все ветки проверены)
+build_local.sh           # локальная сборка на loop-томе btrfs
+tests/run_all_tests.sh   # 37 проверок: синтаксис, XML, ассеты, mock-прогон apply.sh
+.github/workflows/validate.yml  # линтер + слежение за апстримом lineage-21
 ```
+
+## Принципы патчей v2 (уроки v1)
+
+1. **Никаких файлов-дубликатов в `res/values`** — aapt2 падает с `duplicate resource`.
+   Только `DEVICE_PACKAGE_OVERLAYS` (подключается в `device.mk` автоматически).
+2. **Каждый sed проверяется**: цель не найдена и результат не применён → скрипт падает,
+   а не молча продолжает. Идемпотентность гарантирована.
+3. **Цели существуют в реальности**: все строки сверены с живыми исходниками
+   `lineage-21` (июль 2026), CI перепроверяет их еженедельно.

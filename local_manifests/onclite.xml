@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!--
-    Локальный манифест для сборки RetroAOSP (Android 14-16 / LineageOS 21+)
+    Локальный манифест для сборки RetroAOSP (Android 14 / LineageOS 21, ветка платформы lineage-21.0)
     Поддержка устройства: Xiaomi Redmi 7 (кодовое имя: onclite / onc)
     Платформа: Qualcomm Snapdragon 632 (msm8953)
 -->

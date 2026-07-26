@@ -1,84 +1,108 @@
 #!/usr/bin/env bash
 #
-# RetroAOSP — Автоматизированный инженерный испытательный стенд (Test Suite)
-# Проводит 50+ проверок синтаксиса, XML, бинарных сигнатур, манифестов и идемпотентности.
+# RetroAOSP v2 — тестовый стенд.
+# Проверяет то, что МОЖНО проверить без исходников Android:
+#   синтаксис скриптов, валидность XML, целостность бинарных ассетов,
+#   согласованность bootanimation (desc.txt <-> tar) и полный mock-прогон apply.sh.
+# Соответствие целям апстрима lineage-21 проверяет CI (validate.yml) по живым исходникам.
 
-set -e
+set -uo pipefail
 
-echo "======================================================================"
-echo " 🧪 ЗАПУСК ИНЖЕНЕРНОГО ИСПЫТАТЕЛЬНОГО СТЕНДА RETROAOSP (50+ ТЕСТОВ)"
-echo "======================================================================"
+ROOT="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
+PASS=0; FAIL=0
 
-ROOT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
-cd "$ROOT_DIR"
+ok()   { echo "  ✅ $1"; PASS=$((PASS+1)); }
+bad()  { echo "  ❌ $1"; FAIL=$((FAIL+1)); }
+check(){ local d="$1"; shift; if "$@" >/dev/null 2>&1; then ok "$d"; else bad "$d"; fi; }
 
-PASS_COUNT=0
-FAIL_COUNT=0
+echo "=== 1. Синтаксис shell-скриптов ==="
+for f in "$ROOT/patches/apply.sh" "$ROOT/build_local.sh" "$ROOT/tests/run_all_tests.sh"; do
+    check "bash -n $(basename "$f")" bash -n "$f"
+done
 
-function assert_ok() {
-    local TEST_NAME="$1"
-    local CMD="$2"
-    if eval "$CMD" > /dev/null 2>&1; then
-        echo "✅ [TEST OK]: $TEST_NAME"
-        PASS_COUNT=$((PASS_COUNT + 1))
-    else
-        echo "❌ [TEST FAILED]: $TEST_NAME"
-        FAIL_COUNT=$((FAIL_COUNT + 1))
-        exit 1
-    fi
+echo "=== 2. Валидность XML (overlay + манифест) ==="
+xml_ok() { python3 -c "import xml.etree.ElementTree as ET,sys; ET.parse(sys.argv[1])" "$1"; }
+while IFS= read -r -d '' f; do
+    check "XML: ${f#"$ROOT"/}" xml_ok "$f"
+done < <(find "$ROOT/overlay" "$ROOT/local_manifests" -name "*.xml" -print0)
+
+echo "=== 3. Гигиена файлов (CRLF / BOM) ==="
+check "нет CRLF в скриптах и XML" bash -c "! grep -rlI \$'\r' '$ROOT/patches' '$ROOT/overlay' '$ROOT/tests' '$ROOT/build_local.sh'"
+check "нет UTF-8 BOM" bash -c "! grep -rlI \$'\xef\xbb\xbf' '$ROOT/patches' '$ROOT/overlay'"
+
+echo "=== 4. Целостность бинарных ассетов ==="
+check "обои: PNG"            bash -c "head -c8 '$ROOT/overlay/frameworks/base/core/res/res/drawable-nodpi/default_wallpaper.png' | grep -q PNG"
+for f in "$ROOT"/assets/icons/*.png; do
+    check "иконка $(basename "$f"): PNG" bash -c "head -c8 '$f' | grep -q PNG"
+done
+for f in "$ROOT"/assets/sounds/*.ogg; do
+    check "звук $(basename "$f"): OggS" bash -c "head -c4 '$f' | grep -q OggS"
+done
+check "bootanimation.tar читается" tar -tf "$ROOT/assets/bootanimation/bootanimation.tar"
+
+echo "=== 5. Согласованность bootanimation: desc.txt <-> tar ==="
+tar_parts=$(tar -tf "$ROOT/assets/bootanimation/bootanimation.tar" | cut -d/ -f1 | sort -u)
+desc_parts=$(awk '{print $4}' "$ROOT/assets/bootanimation/desc.txt" | sort -u)
+if [[ "$tar_parts" == "$desc_parts" ]]; then
+    ok "части в desc.txt совпадают с каталогами в tar ($(echo "$tar_parts" | tr '\n' ' '))"
+else
+    bad "рассинхрон desc.txt и tar: [$desc_parts] vs [$tar_parts]"
+fi
+
+echo "=== 6. Mock-прогон apply.sh (строки-цели из реального lineage-21) ==="
+MOCK=$(mktemp -d)
+trap 'rm -rf "$MOCK"' EXIT
+mkdir -p "$MOCK"/{frameworks/base/graphics/java/android/graphics/drawable,frameworks/base/packages/SystemUI/src/com/android/systemui/statusbar/phone,frameworks/base/data/sounds/effects/ogg,device/xiaomi/onclite,packages/apps/Trebuchet/src/com/android/launcher3/config,vendor/lineage/bootanimation,packages/apps/Settings/res/drawable}
+
+cat > "$MOCK/frameworks/base/graphics/java/android/graphics/drawable/RippleDrawable.java" <<'EOF'
+public class RippleDrawable {
+    private static final boolean FORCE_PATTERNED_STYLE = true;
 }
+EOF
+cat > "$MOCK/frameworks/base/packages/SystemUI/src/com/android/systemui/statusbar/phone/ClockController.java" <<'EOF'
+public class ClockController {
+    void init() {
+        mActiveClock = mLeftClock;
+        mClockPosition = LineageSettings.System.getInt(resolver,
+                LineageSettings.System.STATUS_BAR_CLOCK, CLOCK_POSITION_LEFT);
+    }
+}
+EOF
+cat > "$MOCK/packages/apps/Trebuchet/src/com/android/launcher3/config/FeatureFlags.java" <<'EOF'
+public final class FeatureFlags {
+    public static final BooleanFlag ENABLE_ALL_APPS_BUTTON_IN_HOTSEAT = getDebugFlag(270393897,
+            "ENABLE_ALL_APPS_BUTTON_IN_HOTSEAT", DISABLED,
+            "Enables displaying the all apps button in the hotseat.");
+}
+EOF
+cat > "$MOCK/device/xiaomi/onclite/device.mk" <<'EOF'
+# Overlays
+DEVICE_PACKAGE_OVERLAYS += $(LOCAL_PATH)/overlay
+DEVICE_PACKAGE_OVERLAYS += $(LOCAL_PATH)/overlay-lineage
+EOF
+cat > "$MOCK/packages/apps/Settings/AndroidManifest.xml" <<'EOF'
+<manifest xmlns:android="http://schemas.android.com/apk/res/android">
+    <application android:icon="@drawable/ic_launcher_settings"/>
+</manifest>
+EOF
+echo '<vector/>' > "$MOCK/packages/apps/Settings/res/drawable/ic_launcher_settings.xml"
 
-echo ""
-echo "--- СЕКЦИЯ 1: СИНТАКСИЧЕСКИЙ АУДИТ BASH ---"
-for SCRIPT in $(find . -maxdepth 2 -name "*.sh"); do
-    assert_ok "bash -n syntax check for $SCRIPT" "bash -n '$SCRIPT'"
-    assert_ok "executable permissions check for $SCRIPT" "[ -x '$SCRIPT' ]"
-done
+run_apply() { (cd "$MOCK" && bash "$ROOT/patches/apply.sh"); }
+check "apply.sh отработал на mock-дереве" run_apply
+check "ripple: FORCE_PATTERNED_STYLE = false" grep -q "FORCE_PATTERNED_STYLE = false;" "$MOCK/frameworks/base/graphics/java/android/graphics/drawable/RippleDrawable.java"
+check "часы: дефолт CLOCK_POSITION_RIGHT" grep -q "CLOCK_POSITION_RIGHT)" "$MOCK/frameworks/base/packages/SystemUI/src/com/android/systemui/statusbar/phone/ClockController.java"
+check "launcher: флаг ENABLED" grep -q '"ENABLE_ALL_APPS_BUTTON_IN_HOTSEAT", ENABLED,' "$MOCK/packages/apps/Trebuchet/src/com/android/launcher3/config/FeatureFlags.java"
+check "device.mk: overlay-retro подключён" grep -q 'overlay-retro' "$MOCK/device/xiaomi/onclite/device.mk"
+check "overlay скопирован" test -f "$MOCK/device/xiaomi/onclite/overlay-retro/frameworks/base/core/res/res/values/config.xml"
+check "bootanimation: tar + desc.txt" bash -c "test -s '$MOCK/vendor/lineage/bootanimation/bootanimation.tar' && grep -q part4 '$MOCK/vendor/lineage/bootanimation/desc.txt'"
+check "звуки установлены" test -f "$MOCK/frameworks/base/data/sounds/effects/ogg/Lock.ogg"
+check "иконка Settings: старый vector удалён" bash -c "! test -e '$MOCK/packages/apps/Settings/res/drawable/ic_launcher_settings.xml'"
+check "иконка Settings: PNG на месте" test -f "$MOCK/packages/apps/Settings/res/drawable-xxxhdpi/ic_launcher_settings.png"
+check "apply.sh идемпотентен (повторный прогон)" run_apply
+check "device.mk: overlay-retro ровно один раз" bash -c "[ \$(grep -c overlay-retro '$MOCK/device/xiaomi/onclite/device.mk') -eq 1 ]"
 
-echo ""
-echo "--- СЕКЦИЯ 2: АУДИТ XML-СТРУКТУР И ПАРСИНГ ---"
-python3 -c '
-import os, xml.etree.ElementTree as ET
-for root, _, files in os.walk("."):
-    for f in files:
-        if f.endswith(".xml") and "mock_android" not in root:
-            path = os.path.join(root, f)
-            ET.parse(path)
-' && echo "✅ [TEST OK]: All 12 XML files successfully parsed by Python ElementTree" && PASS_COUNT=$((PASS_COUNT + 1))
-
-assert_ok "onclite.xml has no duplicate paths" "[ \$(grep -o 'path=\"[^\"]*\"' local_manifests/onclite.xml | sort | uniq -d | wc -l) -eq 0 ]"
-assert_ok "vendor msm8953-common is pinned to revision lineage-20" "grep -q 'path=\"vendor/xiaomi/msm8953-common\".*revision=\"lineage-20\"' local_manifests/onclite.xml"
-assert_ok "kernel is pinned to android_kernel_xiaomi_onclite at kernel/xiaomi/onclite" "grep -q 'path=\"kernel/xiaomi/onclite\".*name=\"LineageOS/android_kernel_xiaomi_onclite\"' local_manifests/onclite.xml"
-
-echo ""
-echo "--- СЕКЦИЯ 3: АУДИТ БИНАРНЫХ РЕСУРСОВ (MAGIC BYTES) ---"
-assert_ok "wallpaper PNG size > 100KB" "[ \$(stat -c%s wallpapers/default_wallpaper.png) -gt 100000 ]"
-assert_ok "bootanimation.tar size > 5MB" "[ \$(stat -c%s bootanimation_patches/bootanimation.tar) -gt 5000000 ]"
-for OGG in audio_patches/*.ogg; do
-    assert_ok "OGG Vorbis header check for $OGG" "head -c 4 '$OGG' | grep -q 'OggS'"
-done
-for PNG in icon_pack_patches/icons/*.png; do
-    assert_ok "PNG header check for $PNG" "head -c 4 '$PNG' | grep -q \$'\\x89PNG'"
-done
-
-echo ""
-echo "--- СЕКЦИЯ 4: ТЕСТ ИДЕМПОТЕНТНОСТИ НА МОК-ДЕРЕВЕ (3-КРАТНЫЙ ПРОГОН) ---"
-mkdir -p tests/mock_idempotent/build/make/target/product
-echo "# Mock product mk" > tests/mock_idempotent/build/make/target/product/handheld_product.mk
-
-cd tests/mock_idempotent
-# Прогон 1
-grep -q "ro.sf.lcd_density" build/make/target/product/handheld_product.mk 2>/dev/null || echo "PRODUCT_PROPERTY_OVERRIDES += ro.sf.lcd_density=320" >> build/make/target/product/handheld_product.mk
-# Прогон 2
-grep -q "ro.sf.lcd_density" build/make/target/product/handheld_product.mk 2>/dev/null || echo "PRODUCT_PROPERTY_OVERRIDES += ro.sf.lcd_density=320" >> build/make/target/product/handheld_product.mk
-# Прогон 3
-grep -q "ro.sf.lcd_density" build/make/target/product/handheld_product.mk 2>/dev/null || echo "PRODUCT_PROPERTY_OVERRIDES += ro.sf.lcd_density=320" >> build/make/target/product/handheld_product.mk
-cd "$ROOT_DIR"
-
-assert_ok "Idempotency test: exactly 1 density override line after 3 runs" "[ \$(grep -c 'ro.sf.lcd_density=320' tests/mock_idempotent/build/make/target/product/handheld_product.mk) -eq 1 ]"
-rm -rf tests/mock_idempotent
-
-echo ""
-echo "======================================================================"
-echo " 🏆 ИСПЫТАТЕЛЬНЫЙ СТЕНД ЗАВЕРШЕН: УСПЕШНО ПРОЙДЕНО ТЕСТОВ: $PASS_COUNT (ОШИБОК: $FAIL_COUNT)"
-echo "======================================================================"
+echo
+echo "=================================================="
+echo " Итог: PASS=$PASS FAIL=$FAIL"
+echo "=================================================="
+[[ $FAIL -eq 0 ]]

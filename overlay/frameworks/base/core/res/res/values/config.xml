@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+    RetroAOSP — системные конфигурационные флаги под поведение Android 7 Nougat.
+    Все имена ресурсов проверены по реальному дереву lineage-21.
+-->
+<resources>
+    <!-- 3-кнопочная навигация по умолчанию (0 = classic 3-button, как в Android 7) -->
+    <integer name="config_navBarInteractionMode">0</integer>
+
+    <!-- Компактные однострочные часы на экране блокировки по умолчанию.
+         Дефолт для Settings.Secure.LOCKSCREEN_USE_DOUBLE_LINE_CLOCK
+         (читается в KeyguardClockSwitchController.updateDoubleLineClock) -->
+    <integer name="config_doublelineClockDefault">0</integer>
+
+    <!-- Квадратная маска иконок вместо круга: адаптивные иконки рисуются
+         полным квадратом, что ближе к свободным формам Nougat.
+         ВАЖНО: пустой строкой маску делать нельзя — это ломает отрисовку иконок. -->
+    <string name="config_icon_mask" translatable="false">M0,0 L100,0 L100,100 L0,100 Z</string>
+
+    <!-- Более резкие и быстрые анимации переходов (дух MD1, бонус к отзывчивости SD632) -->
+    <integer name="config_shortAnimTime">150</integer>
+    <integer name="config_mediumAnimTime">250</integer>
+    <integer name="config_longAnimTime">350</integer>
+</resources>

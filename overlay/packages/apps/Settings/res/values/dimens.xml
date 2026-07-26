@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+    RetroAOSP — плотное главное меню Настроек: без гигантских карточек 88sp
+    и скруглений 28dp. Имена проверены по packages/apps/Settings lineage-21
+    (res/values/dimens.xml, строки 102-103).
+-->
+<resources>
+    <dimen name="homepage_preference_corner_radius">0dp</dimen>
+    <dimen name="homepage_preference_min_height">48dp</dimen>
+</resources>

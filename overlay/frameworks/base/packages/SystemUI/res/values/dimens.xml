@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+    RetroAOSP — плоская геометрия SystemUI: карточки уведомлений, шторка,
+    ползунок яркости и панель громкости без овалов Material You.
+    Имена проверены по packages/SystemUI/res/values/dimens.xml lineage-21.
+-->
+<resources>
+    <!-- Уведомления: строгие углы 2dp, скрим шторки без скругления -->
+    <dimen name="notification_corner_radius">2dp</dimen>
+    <dimen name="notification_corner_radius_small">2dp</dimen>
+    <dimen name="notification_scrim_corner_radius">0dp</dimen>
+
+    <!-- Панель Quick Settings -->
+    <dimen name="qs_corner_radius">2dp</dimen>
+    <dimen name="qs_tile_margin_horizontal">4dp</dimen>
+    <dimen name="qs_tile_margin_vertical">4dp</dimen>
+
+    <!-- Ползунок яркости: тонкая плоская полоса вместо пилюли 48dp.
+         rounded_slider_icon_inset = (height - icon_size) / 2 -->
+    <dimen name="rounded_slider_height">28dp</dimen>
+    <dimen name="rounded_slider_corner_radius">2dp</dimen>
+    <dimen name="rounded_slider_icon_size">18dp</dimen>
+    <dimen name="rounded_slider_icon_inset">5dp</dimen>
+    <dimen name="rounded_slider_track_inset">0dp</dimen>
+    <dimen name="brightness_mirror_height">28dp</dimen>
+
+    <!-- Панель громкости: прямоугольный слайдер вместо сардельки 21dp -->
+    <dimen name="volume_dialog_slider_corner_radius">2dp</dimen>
+</resources>

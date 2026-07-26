@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+    RetroAOSP — геометрия Material Design 1: строгие углы 2dp вместо овалов Material You.
+    config_dialogCornerRadius подхватывается атрибутом android:dialogCornerRadius тем
+    DeviceDefault; control_corner_material — радиус фона стандартных кнопок Material.
+-->
+<resources>
+    <dimen name="config_dialogCornerRadius">2dp</dimen>
+    <dimen name="config_buttonCornerRadius">2dp</dimen>
+    <dimen name="control_corner_material">2dp</dimen>
+</resources>

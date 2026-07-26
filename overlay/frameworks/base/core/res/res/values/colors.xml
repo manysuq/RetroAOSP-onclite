@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+    RetroAOSP — палитра Material Design 1 (Teal 500) для системного акцента.
+    Применяется как build-time overlay (DEVICE_PACKAGE_OVERLAYS), поэтому
+    легально переопределяет ресурсы frameworks/base/core/res/res/values/colors.xml.
+
+    Логика рампы system_accent1 (Monet выключен оверлеем flag_monet=false в SystemUI,
+    поэтому система использует именно эти статические значения):
+      - тёмная тема берёт акцент из system_accent1_100  -> Teal 200 (#80CBC4)
+      - светлая тема берёт акцент из system_accent1_600 -> Teal 500 (#009688)
+-->
+<resources>
+    <color name="system_accent1_0">#FFFFFFFF</color>
+    <color name="system_accent1_10">#FFE0F2F1</color>
+    <color name="system_accent1_50">#FFB2DFDB</color>
+    <color name="system_accent1_100">#FF80CBC4</color>
+    <color name="system_accent1_200">#FF4DB6AC</color>
+    <color name="system_accent1_300">#FF26A69A</color>
+    <color name="system_accent1_400">#FF009688</color>
+    <color name="system_accent1_500">#FF009688</color>
+    <color name="system_accent1_600">#FF009688</color>
+    <color name="system_accent1_700">#FF00796B</color>
+    <color name="system_accent1_800">#FF00695C</color>
+    <color name="system_accent1_900">#FF004D40</color>
+    <color name="system_accent1_1000">#FF000000</color>
+</resources>
