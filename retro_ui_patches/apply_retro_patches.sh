@@ -69,9 +69,9 @@ for PROP_FILE in $(find build/make/target/product device/xiaomi vendor/xiaomi -n
         sed -i 's/ro.sf.lcd_density=.*/ro.sf.lcd_density=320/g' "$PROP_FILE" || true
     fi
 done
-# Также вшиваем системный дефолт в build.prop
+# Также вшиваем системный дефолт в build.prop с защитой от дублирования
 mkdir -p system/sepolicy 2>/dev/null || true
-echo "PRODUCT_PROPERTY_OVERRIDES += ro.sf.lcd_density=320" >> build/make/target/product/handheld_product.mk 2>/dev/null || true
+grep -q "ro.sf.lcd_density" build/make/target/product/handheld_product.mk 2>/dev/null || echo "PRODUCT_PROPERTY_OVERRIDES += ro.sf.lcd_density=320" >> build/make/target/product/handheld_product.mk 2>/dev/null || true
 
 echo "=========================================================="
 echo " ✅ Все 11 модулей RetroAOSP успешно интегрированы в исходный код!"
